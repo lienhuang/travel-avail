@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>快速搜尋</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#fff}
+body{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",-apple-system,sans-serif;color:#1F2D33;padding:14px 14px 4px;-webkit-font-smoothing:antialiased}
+b{display:block;font-size:15px;margin:0 0 8px}
+small{display:block;font-size:12px;color:#5E6E73;margin:10px 0 6px;font-weight:700}
+.g{display:flex;flex-wrap:wrap;gap:6px}
+label{cursor:pointer;-webkit-tap-highlight-color:transparent}
+input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+span{display:inline-block;border:1px solid #DDE6E8;border-radius:999px;padding:5px 12px;font-size:13px;background:#fff;line-height:1.4}
+span i{font-style:normal;font-size:11px;color:#8A989C;margin-left:4px}
+input:checked+span{border-color:#26BEC9;background:#26BEC9;color:#fff;font-weight:700}
+input:checked+span i{color:#fff}
+input:focus-visible+span{outline:2px solid #0E7C85;outline-offset:2px}
+.ok{font-size:12px;color:#0E7C85;margin:10px 0 0;min-height:16px}
+</style></head><body>
+<b>快速搜尋</b>
+<small>出發時間</small>
+<div class="g" id="gh">
+  <label><input type="radio" name="hol" value="" checked><span>不限</span></label>
+  <label><input type="radio" name="hol" value="1"><span id="h1">最近的連假</span></label>
+  <label><input type="radio" name="hol" value="2"><span id="h2">下一個連假</span></label>
+</div>
+<small>目的地</small>
+<div class="g">
+  <label><input type="radio" name="to" value="" checked><span>不限</span></label>
+  <label><input type="radio" name="to" value="日本"><span>日本</span></label>
+  <label><input type="radio" name="to" value="韓國"><span>韓國</span></label>
+  <label><input type="radio" name="to" value="越南"><span>越南</span></label>
+  <label><input type="radio" name="to" value="泰國"><span>泰國</span></label>
+  <label><input type="radio" name="to" value="香港"><span>香港</span></label>
+  <label><input type="radio" name="to" value="新加坡"><span>新加坡</span></label>
+</div>
+<small>類別</small>
+<div class="g">
+  <label><input type="radio" name="c" value="" checked><span>全部</span></label>
+  <label><input type="radio" name="c" value="機票"><span>機票</span></label>
+  <label><input type="radio" name="c" value="機加酒"><span>機加酒</span></label>
+  <label><input type="radio" name="c" value="郵輪"><span>郵輪</span></label>
+</div>
+<p class="ok" id="ok"></p>
+<script>
+(function(){
+  // 找到同一個活動頁裡的搜尋區塊（iframe name="kkfind"，與本頁同網域）
+  function target(){try{var f=parent.frames['kkfind'];if(f&&f.kkApply)return f}catch(e){}return null}
+  function val(n){var x=document.querySelector('input[name="'+n+'"]:checked');return x?x.value:''}
+  function apply(){var o={hol:val('hol'),to:val('to'),c:val('c')},t=target();
+    if(t){t.kkApply(o);var n=t.document.getElementById('cnt');document.getElementById('ok').textContent=n?'✓ '+n.innerText.split('\n')[0].replace(/(行程可以訂).*/,'$1')+'，按「搜尋」查看':''}
+    else{try{parent.frames['kkfind'].location.href='./?v=17&hol='+encodeURIComponent(o.hol)+'&to='+encodeURIComponent(o.to)+'&c='+encodeURIComponent(o.c)}catch(e){}}}
+  document.body.addEventListener('change',apply);
+  // 連假名稱
+  var tries=0;(function hl(){var t=target();if(t&&t.kkHols){var h=t.kkHols();if(h[0])document.getElementById('h1').innerHTML=h[0].n+'<i>'+h[0].d+'</i>';if(h[1])document.getElementById('h2').innerHTML=h[1].n+'<i>'+h[1].d+'</i>'}else if(tries++<20)setTimeout(hl,500)})();
+})();
+</script>
+</body></html>
